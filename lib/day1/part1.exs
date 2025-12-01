@@ -7,20 +7,18 @@ defmodule Dial do
 
 
   def turn(dial, {direction, distance}) do
-    new_position = do_turn(dial, {direction, distance})
-    if new_position == 0 do
-        %Dial{position: new_position, count_zeros: dial.count_zeros + 1}
-    else
-        %Dial{position: new_position, count_zeros: dial.count_zeros}
-    end
+    {new_position, count_zeros} = do_turn(dial, {direction, distance})
+    %Dial{position: new_position, count_zeros: dial.count_zeros + count_zeros}
   end
 
   defp do_turn(dial, {:left, distance})  do
-    rem(rem(dial.position - distance, 100) + 100, 100)
+    count_zeros = div(dial.position - distance, 100)
+    {rem(rem(dial.position - distance, 100) + 100, 100), count_zeros}
   end
 
   defp do_turn(dial, {:right, distance}) do
-    rem(dial.position + distance, 100)
+    count_zeros = div(dial.position + distance, 100)
+    {rem(dial.position + distance, 100), count_zeros}
   end
 end
 
