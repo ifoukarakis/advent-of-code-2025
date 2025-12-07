@@ -11,3 +11,4 @@ Solutions for Advent of Code 2025 using Elixir.
 | [Day 4](https://adventofcode.com/2025/day/4) | [Part 1](lib/day4/forklift.ex#L52) | [Part 2](lib/day4/forklift.ex#L58) |
 | [Day 5](https://adventofcode.com/2025/day/5) |   [Part 1](lib/day5/kitchen.ex)    |   [Part 2](lib/day5/kitchen.ex)    |
 | [Day 6](https://adventofcode.com/2025/day/6) |   [Part 1](lib/day6/homework.exs)  |   [Part 2](lib/day6/homework.exs)  |
+| [Day 7](https://adventofcode.com/2025/day/7) | [Part 1](lib/day7/teleporter.exs)  | [Part 2](lib/day7/teleporter.exs)  |
