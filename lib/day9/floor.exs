@@ -1,101 +1,77 @@
-defmodule JunctionBox.Reader do
+defmodule Floor.Reader do
+
+  def as_integer_list(list) do
+    list |> Enum.map(&Integer.parse/1)
+  end
+
+  def strings_to_integers(list) do
+    list |> Enum.map(&String.to_integer/1)
+  end
+
   def read(path) do
     path
     |> File.stream!()
     |> Enum.map(&String.trim_trailing(&1, "\n"))
-    |> Enum.map(&String.split(&1, ","))
-    |> Enum.map(fn x -> x |> Enum.map(&String.to_integer/1) end)
-    |> Enum.with_index()
-    |> Enum.into(%{}, fn {list, idx} -> {idx, list} end)
+    |> Enum.map(fn line ->
+      line
+      |> String.split(",")
+      |> strings_to_integers()
+      |> List.to_tuple()
+    end)
   end
 end
 
 
-defmodule JunctionBox.Solver do
-
-  def all_pairs(boxes) do
-    size = map_size(boxes)
-    for a <- 0..(size - 1), b <- 0..(size - 1), a < b, do: {a, b}
+defmodule Floor.Solver do
+  def all_pairs(tiles) do
+    for a <- tiles, b <- tiles, a != b, do: {a, b}
   end
 
-  def distance(a, b) do
-    Enum.zip(a, b)
-    |> Enum.map(fn {x1, x2} -> (x1 - x2) * (x1 - x2) end)
-    |> Enum.sum()
-    |> :math.sqrt()
+  def area({x1, y1}, {x2, y2}) do
+    (abs(x1 - x2) + 1) * (abs(y1 - y2) + 1)
   end
 
-  def distances(boxes) do
-    boxes
-    # Find all box pairs
-    |> all_pairs
-    # Calculate distance for each combination
-    |> Enum.map(fn {a, b} -> {{a, b}, distance(boxes[a], boxes[b])} end)
-    # Sort by distance
-    |> Enum.sort_by(fn {_, dist} -> dist end)
+  def intersect?({{x1a, y1a}, {x2a, y2a}}, {{x1b, y1b}, {x2b, y2b}}) do
+    al = min(x1a, x2a)
+    ar = max(x1a, x2a)
+    at = min(y1a, y2a)
+    ab = max(y1a, y2a)
+
+    bl = min(x1b, x2b)
+    br = max(x1b, x2b)
+    bt = min(y1b, y2b)
+    bb = max(y1b, y2b)
+
+    al < br and ar > bl and at < bb and ab > bt
   end
 
-  defp merge_circuits(circuits, circuit_a, circuit_b) do
-    Enum.map(circuits, fn {box, circ} ->
-      {box, if(circ == circuit_b, do: circuit_a, else: circ)}
-    end)
-    |> Map.new()
+  def part1(tiles) do
+    tiles
+    |> all_pairs()
+    |> Enum.map(fn {a, b} -> area(a, b) end)
+    |> Enum.max()
   end
 
-  def part1(boxes, num_connections) do
-    n = map_size(boxes)
+  def part2(tiles) do
+    # Create edge rectangles from consecutive tile pairs (wrapping around)
+    edges = tiles
+    |> Enum.chunk_every(2, 1, tiles)
+    |> Enum.map(fn [a, b] -> {a, b} end)
 
-    boxes
-    |> distances()
-    |> Enum.take(num_connections)
-    |> Enum.reduce(Map.new(0..(n - 1), fn i -> {i, i} end), fn {{a, b}, _}, circuits ->
-      circuit_a = circuits[a]
-      circuit_b = circuits[b]
+    # Find the largest rectangle that doesn't intersect with any edge
+    tiles
+    |> all_pairs()
+    |> Enum.reduce(0, fn rect, max_area ->
+      current_area = area(elem(rect, 0), elem(rect, 1))
 
-      if circuit_a == circuit_b do
-        circuits
+      if current_area > max_area and not Enum.any?(edges, &intersect?(rect, &1)) do
+        current_area
       else
-        merge_circuits(circuits, circuit_a, circuit_b)
+        max_area
       end
     end)
-    |> Map.values()
-    |> Enum.frequencies()
-    |> Map.values()
-    |> Enum.sort(:desc)
-    |> Enum.take(3)
-    |> Enum.product()
-  end
-
-  def part2(boxes) do
-    n = map_size(boxes)
-
-    {_circuits, {a, b}} =
-      boxes
-      |> distances()
-      |> Enum.reduce_while({Map.new(0..(n - 1), fn i -> {i, i} end), nil}, fn {{a, b}, _}, {circuits, _} ->
-        circuit_a = circuits[a]
-        circuit_b = circuits[b]
-
-        if circuit_a == circuit_b do
-          {:cont, {circuits, nil}}
-        else
-          new_circuits = merge_circuits(circuits, circuit_a, circuit_b)
-          num_circuits = new_circuits |> Map.values() |> Enum.uniq() |> length()
-
-          if num_circuits == 1 do
-            {:halt, {new_circuits, {a, b}}}
-          else
-            {:cont, {new_circuits, {a, b}}}
-          end
-        end
-      end)
-
-    [x1 | _] = boxes[a]
-    [x2 | _] = boxes[b]
-    x1 * x2
   end
 end
 
-# Use 10 for example, 1000 for your input
-JunctionBox.Reader.read("input.example") |> JunctionBox.Solver.part1(10) |> IO.inspect(label: "Part 1")
-JunctionBox.Reader.read("input.example") |> JunctionBox.Solver.part2() |> IO.inspect(label: "Part 2")
+Floor.Reader.read("input.example") |> Floor.Solver.part1() |> IO.inspect(label: "Part 1", charlists: :as_lists)
+Floor.Reader.read("input.example") |> Floor.Solver.part2() |> IO.inspect(label: "Part 2", charlists: :as_lists)
