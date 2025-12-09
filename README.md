@@ -12,3 +12,5 @@ Solutions for Advent of Code 2025 using Elixir.
 | [Day 5](https://adventofcode.com/2025/day/5) |   [Part 1](lib/day5/kitchen.ex)    |   [Part 2](lib/day5/kitchen.ex)    |
 | [Day 6](https://adventofcode.com/2025/day/6) |   [Part 1](lib/day6/homework.exs)  |   [Part 2](lib/day6/homework.exs)  |
 | [Day 7](https://adventofcode.com/2025/day/7) | [Part 1](lib/day7/teleporter.exs)  | [Part 2](lib/day7/teleporter.exs)  |
+| [Day 8](https://adventofcode.com/2025/day/8) | [Part 1](lib/day8/playground.exs)  | [Part 2](lib/day8/playground.exs)  |
+| [Day 9](https://adventofcode.com/2025/day/9) |    [Part 1](lib/day9/floor.exs)    |    [Part 2](lib/day9/floor.exs)    |
