@@ -15,3 +15,4 @@ Solutions for Advent of Code 2025 using Elixir.
 | [Day 8](https://adventofcode.com/2025/day/8) | [Part 1](lib/day8/playground.exs)  | [Part 2](lib/day8/playground.exs)  |
 | [Day 9](https://adventofcode.com/2025/day/9) |    [Part 1](lib/day9/floor.exs)    |    [Part 2](lib/day9/floor.exs)    |
 | [Day 10](https://adventofcode.com/2025/day/10) |   [Part 1](lib/day10/machine.exs)  | Part 2 (requires ILP solver)       |
+| [Day 11](https://adventofcode.com/2025/day/11) |   [Part 1](lib/day11/device.exs)   |   [Part 2](lib/day11/device.exs)   |
